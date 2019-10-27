@@ -12,11 +12,12 @@ af_DK <- get_artist_audio_features('Didi Kempot')
 af_VV <- get_artist_audio_features('Via Vallen')
 af_BSB <- get_artist_audio_features('Backstreet Boys')
 af_BTS <- get_artist_audio_features('BTS')
-af<-rbind(af_DK,af_VV,af_BSB,af_BTS)
+af_NK <- get_artist_audio_features('Nella Kharisma')
+af<-rbind(af_DK,af_VV,af_BSB,af_BTS,af_NK)
 
 ggplot()+
   geom_boxplot(data = af, 
-             mapping = aes(x=artist_name,y = tempo,color = as.factor(artist_name)), 
+             mapping = aes(x=artist_name,y = liveness,color = as.factor(artist_name)), 
              )
 
 ggplot()+
