@@ -3,7 +3,10 @@ library(tidyverse)
 library(data.table)
 library(genius)
 library(tm)
+library(cowplot)
 
+Sys.setenv(SPOTIFY_CLIENT_ID = 'c97953505980495e8fef75f234f6e82f')
+Sys.setenv(SPOTIFY_CLIENT_SECRET = '665799370c6044e4bf5eb2a74cb25f7f')
 
 access_token <- get_spotify_access_token(client_id = Sys.getenv('SPOTIFY_CLIENT_ID'), client_secret = Sys.getenv('SPOTIFY_CLIENT_SECRET'))
 
@@ -38,14 +41,32 @@ ggplot()+
 lyrics<-genius_lyrics(artist = "Didi Kempot", song = "Pamer Bojo", info = "title")
 #spotify:playlist:37i9dQZF1DX7qK8ma5wgG1
 #playlists <- get_user_playlists('Sad Songs')
-playlists <- get_playlist_tracks("37i9dQZF1DWX27wTtU5ZMz")
-uri<-as.data.frame(playlists$track.id) 
-#spotify:playlist:37i9dQZF1DX9U5XaCM7ssr
-#spotify:playlist:7vBShQfXqgKHshNTD9JnWQ
-#spotify:playlist:37i9dQZF1DWX27wTtU5ZMz menikahimu
+playlists_70 <- get_playlist_tracks("37i9dQZF1DWTJ7xPn4vNaz")
+playlists_80 <- get_playlist_tracks("37i9dQZF1DX4UtSsGT1Sbe")
+playlists_90 <- get_playlist_tracks("37i9dQZF1DXbTxeAdrVG2l")
 
-track<-get_track_audio_features(uri[1:dim(uri)[1],])
-playlists<-cbind(playlists,track)
+uri_70<-as.data.frame(playlists_70$track.id) 
+uri_80<-as.data.frame(playlists_80$track.id) 
+uri_90<-as.data.frame(playlists_90$track.id) 
+
+track_70<-get_track_audio_features(uri_70[1:dim(uri_70)[1],])
+track_80<-get_track_audio_features(uri_80[1:dim(uri_80)[1],])
+track_90<-get_track_audio_features(uri_90[1:dim(uri_90)[1],])
+
+label_70<-as.data.frame(rep("70an",times=dim(uri_70)[1]))
+names(label_70)[1]<-"genre"
+
+label_80<-as.data.frame(rep("80an",times=dim(uri_80)[1]))
+names(label_80)[1]<-"genre"
+
+label_90<-as.data.frame(rep("90an",times=dim(uri_90)[1]))
+names(label_90)[1]<-"genre"
+
+t_70<-cbind(playlists_70,track_70,label_70)
+t_80<-cbind(playlists_80,track_80,label_80)
+t_90<-cbind(playlists_90,track_90,label_90)
+
+playlists<-rbind(t_70,t_80,t_90)
 summary(track)
 
 ggplot()+
@@ -55,6 +76,57 @@ ggplot()+
     mapping = aes(tempo)
   )
 
+#ggplot(data=playlists,aes(x=tempo))+
+#  geom_histogram(bins=10,data=playlists,mapping=aes(tempo))
+
+#ggplot2.histogram(data=playlists, xName='danceability',
+#                  groupName='genre', legendPosition="top",
+#                  alpha=0.5 )
+
+#ggplot(data=playlists,aes(x=energy,fill=genre))+
+#  geom_histogram(binwidth=2)
+
+ggplot(data=playlists)+
+  geom_histogram(bins=5,mapping=aes(x=tempo,fill=genre))
+
+plot_loudness<-ggplot(data=playlists,aes(x=genre,y=loudness,fill=genre))+
+  geom_boxplot()+
+  theme(legend.position = "none")
+
+plot_danceability<-ggplot(data=playlists,aes(x=genre,y=danceability,fill=genre))+
+  geom_boxplot()+
+  theme(legend.position = "none")
+
+plot_energy<-ggplot(data=playlists,aes(x=genre,y=energy,fill=genre))+
+  geom_boxplot()+
+  theme(legend.position = "none")
+
+plot_liveness<-ggplot(data=playlists,aes(x=genre,y=liveness,fill=genre))+
+  geom_boxplot()+
+  theme(legend.position = "none")
+
+plot_valence<-ggplot(data=playlists,aes(x=genre,y=valence,fill=genre))+
+  geom_boxplot()+
+  theme(legend.position = "none")
+
+plot_tempo<-ggplot(data=playlists,aes(x=genre,y=tempo,fill=genre))+
+  geom_boxplot()+
+  theme(legend.position = "none")
+
+plot_instrumentalness<-ggplot(data=playlists,aes(x=genre,y=instrumentalness,fill=genre))+
+  geom_boxplot()+
+  theme(legend.position = "none")
+
+plot_grid(plot_loudness,
+          plot_energy,
+          plot_tempo,
+          plot_valence,
+          labels = "AUTO")
+
+#ggplot(playlists, aes(x=genre), danceability)) +
+#  geom_boxplot()
+df <- apply(playlists,2,as.character)
+write.csv(df,"spotify.csv")
 
 library(mlbench)
 library(caret)
