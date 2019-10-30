@@ -40,18 +40,25 @@ ggplot()+
 
 lyrics<-genius_lyrics(artist = "Didi Kempot", song = "Pamer Bojo", info = "title")
 #spotify:playlist:37i9dQZF1DX7qK8ma5wgG1
+#spotify:playlist:37i9dQZF1DXaKIA8E7WcJj 60 an
 #playlists <- get_user_playlists('Sad Songs')
+playlists_60 <- get_playlist_tracks("37i9dQZF1DXaKIA8E7WcJj")
 playlists_70 <- get_playlist_tracks("37i9dQZF1DWTJ7xPn4vNaz")
 playlists_80 <- get_playlist_tracks("37i9dQZF1DX4UtSsGT1Sbe")
 playlists_90 <- get_playlist_tracks("37i9dQZF1DXbTxeAdrVG2l")
 
+uri_60<-as.data.frame(playlists_60$track.id) 
 uri_70<-as.data.frame(playlists_70$track.id) 
 uri_80<-as.data.frame(playlists_80$track.id) 
 uri_90<-as.data.frame(playlists_90$track.id) 
 
+track_60<-get_track_audio_features(uri_60[1:dim(uri_60)[1],])
 track_70<-get_track_audio_features(uri_70[1:dim(uri_70)[1],])
 track_80<-get_track_audio_features(uri_80[1:dim(uri_80)[1],])
 track_90<-get_track_audio_features(uri_90[1:dim(uri_90)[1],])
+
+label_60<-as.data.frame(rep("60an",times=dim(uri_60)[1]))
+names(label_60)[1]<-"genre"
 
 label_70<-as.data.frame(rep("70an",times=dim(uri_70)[1]))
 names(label_70)[1]<-"genre"
@@ -62,11 +69,12 @@ names(label_80)[1]<-"genre"
 label_90<-as.data.frame(rep("90an",times=dim(uri_90)[1]))
 names(label_90)[1]<-"genre"
 
+t_60<-cbind(playlists_60,track_60,label_60)
 t_70<-cbind(playlists_70,track_70,label_70)
 t_80<-cbind(playlists_80,track_80,label_80)
 t_90<-cbind(playlists_90,track_90,label_90)
 
-playlists<-rbind(t_70,t_80,t_90)
+playlists<-rbind(t_60,t_70,t_80,t_90)
 summary(track)
 
 ggplot()+
