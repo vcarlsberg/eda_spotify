@@ -17,6 +17,8 @@ Sys.setenv(SPOTIFY_CLIENT_SECRET = '665799370c6044e4bf5eb2a74cb25f7f')
 
 access_token <- get_spotify_access_token(client_id = Sys.getenv('SPOTIFY_CLIENT_ID'), client_secret = Sys.getenv('SPOTIFY_CLIENT_SECRET'))
 
+#spotify:playlist:37i9dQZEVXbObFQZ3JLcXt --> top 50 indonesia
+#spotify:playlist:37i9dQZEVXbMDoHDwVN2tF --> global top 50
 playlist<-get_playlist_tracks("37i9dQZEVXbMDoHDwVN2tF")
 uri<-as.data.frame(playlist$track.id)
 track<-get_track_audio_features(uri[1:dim(uri)[1],])
@@ -24,7 +26,7 @@ data_model<-cbind(playlist,track)
 
 linearMod <- lm(track.popularity ~ danceability+energy+key+
                   loudness+speechiness+acousticness+instrumentalness+
-                  liveness+valence+tempo+track.duration_ms, data=data_model)
+                  liveness+valence+tempo+track.duration_ms+0, data=data_model)
 summary(linearMod)
 
 cor.test(data_model$track.popularity,data_model$acousticness,method="pearson")
