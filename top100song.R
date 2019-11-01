@@ -22,7 +22,7 @@ access_token <- get_spotify_access_token(client_id = Sys.getenv('SPOTIFY_CLIENT_
 #spotify:playlist:37i9dQZEVXbKpV6RVDTWcZ --> indonesia viral 50
 #spotify:playlist:37i9dQZEVXbLiRSasKsNU9 --> global viral 50
 
-playlist<-get_playlist_tracks("37i9dQZEVXbLiRSasKsNU9")
+playlist<-get_playlist_tracks("37i9dQZEVXbMDoHDwVN2tF")
 uri<-as.data.frame(playlist$track.id)
 track<-get_track_audio_features(uri[1:dim(uri)[1],])
 data_model<-cbind(playlist,track)
@@ -41,7 +41,6 @@ res2 <- rcorr(as.matrix(track_corr))
 res2
 
 res<-cor(as.matrix(track_corr))
-par(ask = TRUE)
 res
 
 corrplot(res, method="circle", order = "alphabet")
