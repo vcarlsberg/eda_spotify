@@ -35,14 +35,16 @@ summary(linearMod)
 cor.test(data_model$track.popularity,data_model$acousticness,method="pearson")
 
 track_corr=cbind(track[,1:11],data_model$track.duration_ms)
+names(track_corr)[12]<-"duration"
 
 res2 <- rcorr(as.matrix(track_corr))
 res2
 
-corrplot(track_corr, type = "upper", order = "hclust", 
-         tl.col = "black", tl.srt = 45)
+res<-cor(as.matrix(track_corr))
+par(ask = TRUE)
+res
 
-corrplot(track_corr, method ="color")
+corrplot(res, method="circle", order = "alphabet")
 
 plot_loudness<-ggplot(data=track,aes(y=loudness))+
   geom_boxplot()+
