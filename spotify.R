@@ -11,34 +11,34 @@ Sys.setenv(SPOTIFY_CLIENT_SECRET = '665799370c6044e4bf5eb2a74cb25f7f')
 access_token <- get_spotify_access_token(client_id = Sys.getenv('SPOTIFY_CLIENT_ID'), client_secret = Sys.getenv('SPOTIFY_CLIENT_SECRET'))
 
 
-af_DK <- get_artist_audio_features('Didi Kempot')
-af_VV <- get_artist_audio_features('Via Vallen')
-af_BSB <- get_artist_audio_features('Backstreet Boys')
-af_BTS <- get_artist_audio_features('BTS')
-af_NK <- get_artist_audio_features('Nella Kharisma')
-af<-rbind(af_DK,af_VV,af_BSB,af_BTS,af_NK)
+#af_DK <- get_artist_audio_features('Didi Kempot')
+#af_VV <- get_artist_audio_features('Via Vallen')
+#af_BSB <- get_artist_audio_features('Backstreet Boys')
+#af_BTS <- get_artist_audio_features('BTS')
+#af_NK <- get_artist_audio_features('Nella Kharisma')
+#af<-rbind(af_DK,af_VV,af_BSB,af_BTS,af_NK)
 
-ggplot()+
-  geom_boxplot(data = af, 
-             mapping = aes(x=artist_name,y = liveness,color = as.factor(artist_name)), 
-             )
+#ggplot()+
+#  geom_boxplot(data = af, 
+#             mapping = aes(x=artist_name,y = liveness,color = as.factor(artist_name)), 
+#             )
 
-ggplot()+
-  geom_boxplot(data = af, 
-               mapping = aes(x=artist_name,y = danceability,color = as.factor(artist_name)), 
-  )
-
-af_filter=filter(af,artist_name=="Via Vallen")
-ggplot()+
-  geom_histogram(
-    bins=10,
-    data = af_filter, 
-    mapping = aes(danceability)
-  )
-
-
-
-lyrics<-genius_lyrics(artist = "Didi Kempot", song = "Pamer Bojo", info = "title")
+# ggplot()+
+#   geom_boxplot(data = af, 
+#                mapping = aes(x=artist_name,y = danceability,color = as.factor(artist_name)), 
+#   )
+# 
+# af_filter=filter(af,artist_name=="Via Vallen")
+# ggplot()+
+#   geom_histogram(
+#     bins=10,
+#     data = af_filter, 
+#     mapping = aes(danceability)
+#   )
+# 
+# 
+# 
+# lyrics<-genius_lyrics(artist = "Didi Kempot", song = "Pamer Bojo", info = "title")
 #spotify:playlist:37i9dQZF1DX7qK8ma5wgG1
 #spotify:playlist:37i9dQZF1DXaKIA8E7WcJj 60 an
 #playlists <- get_user_playlists('Sad Songs')
@@ -99,36 +99,53 @@ ggplot(data=playlists)+
 
 plot_loudness<-ggplot(data=playlists,aes(x=genre,y=loudness,fill=genre))+
   geom_boxplot()+
-  theme(legend.position = "none")
+  theme(legend.position = "none")+
+  stat_summary(fun.y="mean", geom="point", size=2,
+               position=position_dodge(width=0.75), color="red")
 
 plot_danceability<-ggplot(data=playlists,aes(x=genre,y=danceability,fill=genre))+
   geom_boxplot()+
-  theme(legend.position = "none")
+  theme(legend.position = "none")+
+  stat_summary(fun.y="mean", geom="point", size=2,
+               position=position_dodge(width=0.75), color="red")
 
 plot_energy<-ggplot(data=playlists,aes(x=genre,y=energy,fill=genre))+
   geom_boxplot()+
-  theme(legend.position = "none")
+  theme(legend.position = "none")+
+  stat_summary(fun.y="mean", geom="point", size=2,
+               position=position_dodge(width=0.75), color="red")
 
 plot_liveness<-ggplot(data=playlists,aes(x=genre,y=liveness,fill=genre))+
   geom_boxplot()+
-  theme(legend.position = "none")
+  theme(legend.position = "none")+
+  stat_summary(fun.y="mean", geom="point", size=2,
+               position=position_dodge(width=0.75), color="red")
 
 plot_valence<-ggplot(data=playlists,aes(x=genre,y=valence,fill=genre))+
   geom_boxplot()+
-  theme(legend.position = "none")
+  theme(legend.position = "none")+
+  stat_summary(fun.y="mean", geom="point", size=2,
+               position=position_dodge(width=0.75), color="red")
+plot_valence
+aggregate(playlists, by=list(playlists$genre), FUN=mean)
 
 plot_tempo<-ggplot(data=playlists,aes(x=genre,y=tempo,fill=genre))+
   geom_boxplot()+
-  theme(legend.position = "none")
+  theme(legend.position = "none")+
+  stat_summary(fun.y="mean", geom="point", size=2,
+               position=position_dodge(width=0.75), color="red")
 
 plot_instrumentalness<-ggplot(data=playlists,aes(x=genre,y=instrumentalness,fill=genre))+
   geom_boxplot()+
-  theme(legend.position = "none")
+  theme(legend.position = "none")+
+  stat_summary(fun.y="mean", geom="point", size=2,
+               position=position_dodge(width=0.75), color="red")
+  
 
 plot_grid(plot_loudness,
           plot_energy,
           plot_tempo,
-          plot_valence,
+          plot_valence,plot_instrumentalness,plot_liveness,
           labels = "AUTO")
 
 #ggplot(playlists, aes(x=genre), danceability)) +
