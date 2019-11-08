@@ -22,9 +22,31 @@ access_token <- get_spotify_access_token(client_id = Sys.getenv('SPOTIFY_CLIENT_
 #spotify:playlist:37i9dQZEVXbKpV6RVDTWcZ --> indonesia viral 50
 #spotify:playlist:37i9dQZEVXbLiRSasKsNU9 --> global viral 50
 
-playlist<-get_playlist_tracks("37i9dQZEVXbMDoHDwVN2tF")
-uri<-as.data.frame(playlist$track.id)
-track<-get_track_audio_features(uri[1:dim(uri)[1],])
+daftar_playlists=c("37i9dQZEVXbObFQZ3JLcXt","37i9dQZEVXbMDoHDwVN2tF",
+                   "37i9dQZEVXbKpV6RVDTWcZ","37i9dQZEVXbLiRSasKsNU9")
+
+playlist<-data.frame()
+for (pl in daftar_playlists)
+{
+  print (pl)
+  playlist<-rbind(playlist,get_playlist_tracks(pl))
+}
+
+
+#playlist<-get_playlist_tracks("37i9dQZEVXbMDoHDwVN2tF")
+uri<-(playlist$track.id)
+
+#uri<-as.factor(uri)
+
+track<-data.frame()
+for (pl in uri)
+{
+  print (pl)
+  track<-rbind(track,get_track_audio_features(pl))
+}
+
+
+#track<-get_track_audio_features(uri[1:dim(uri)[1],])
 data_model<-cbind(playlist,track)
 
 linearMod <- lm(track.popularity ~ danceability+energy+key+
