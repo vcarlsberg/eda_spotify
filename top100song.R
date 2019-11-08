@@ -21,9 +21,24 @@ access_token <- get_spotify_access_token(client_id = Sys.getenv('SPOTIFY_CLIENT_
 #spotify:playlist:37i9dQZEVXbMDoHDwVN2tF --> global top 50
 #spotify:playlist:37i9dQZEVXbKpV6RVDTWcZ --> indonesia viral 50
 #spotify:playlist:37i9dQZEVXbLiRSasKsNU9 --> global viral 50
+#spotify:playlist:37i9dQZEVXbObFQZ3JLcXt
+#spotify:playlist:37i9dQZF1DXa2EiKmMLhFD
+#spotify:playlist:37i9dQZF1DX6QWuY4eJT1f
+#spotify:playlist:37i9dQZF1DXaokDaMlNwPI
+#spotify:playlist:37i9dQZF1DX8vAahjzdXGC
 
-daftar_playlists=c("37i9dQZEVXbObFQZ3JLcXt","37i9dQZEVXbMDoHDwVN2tF",
-                   "37i9dQZEVXbKpV6RVDTWcZ","37i9dQZEVXbLiRSasKsNU9")
+#spotify:playlist:37i9dQZF1DXd82NU5rAcTZ
+#spotify:playlist:37i9dQZF1DWZrhFFq3bnGV
+#spotify:playlist:4z2siDcwuty0GWMY2CU4ju
+#spotify:playlist:37i9dQZF1DXaERaPeATJvJ
+#spotify:playlist:37i9dQZF1DWTDjtvOmdzrF
+
+daftar_playlists=unique(c("37i9dQZF1DXd82NU5rAcTZ","37i9dQZF1DWZrhFFq3bnGV",
+                   "4z2siDcwuty0GWMY2CU4ju","37i9dQZF1DXaERaPeATJvJ",
+                   "37i9dQZF1DWTDjtvOmdzrF","37i9dQZF1DWTRkBYeInhLG",
+                   "37i9dQZF1DXdHrK6XFPCM1","37i9dQZF1DX6wbVzPMSvwH",
+                   "37i9dQZF1DX4V6WLWzdIgr","37i9dQZF1DWZxM58TRkuqg",
+                   "37i9dQZF1DXaokDaMlNwPI"))
 
 playlist<-data.frame()
 for (pl in daftar_playlists)
@@ -32,9 +47,12 @@ for (pl in daftar_playlists)
   playlist<-rbind(playlist,get_playlist_tracks(pl))
 }
 
+playlist<-playlist[!duplicated(playlist$track.id), ]
 
+
+playlist<-unique(playlist)
 #playlist<-get_playlist_tracks("37i9dQZEVXbMDoHDwVN2tF")
-uri<-(playlist$track.id)
+uri<-unique(playlist$track.id)
 
 #uri<-as.factor(uri)
 
@@ -42,7 +60,10 @@ track<-data.frame()
 for (pl in uri)
 {
   print (pl)
+  
+  #if (is.na.data.frame(ddd)) 1 else 3
   track<-rbind(track,get_track_audio_features(pl))
+  Sys.sleep(0.1)
 }
 
 
