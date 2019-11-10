@@ -42,20 +42,33 @@ access_token <- get_spotify_access_token(client_id = Sys.getenv('SPOTIFY_CLIENT_
 #spotify:playlist:37i9dQZF1DX7qK8ma5wgG1
 #spotify:playlist:37i9dQZF1DXaKIA8E7WcJj 60 an
 #playlists <- get_user_playlists('Sad Songs')
+playlists_50 <- get_playlist_tracks("37i9dQZF1DWSV3Tk4GO2fq")
 playlists_60 <- get_playlist_tracks("37i9dQZF1DXaKIA8E7WcJj")
 playlists_70 <- get_playlist_tracks("37i9dQZF1DWTJ7xPn4vNaz")
 playlists_80 <- get_playlist_tracks("37i9dQZF1DX4UtSsGT1Sbe")
 playlists_90 <- get_playlist_tracks("37i9dQZF1DXbTxeAdrVG2l")
+playlists_00 <- get_playlist_tracks("37i9dQZF1DX4o1oenSJRJd")
+playlists_10 <- get_playlist_tracks("37i9dQZF1DX5Ejj0EkURtP")
 
+
+uri_50<-as.data.frame(playlists_50$track.id) 
 uri_60<-as.data.frame(playlists_60$track.id) 
 uri_70<-as.data.frame(playlists_70$track.id) 
 uri_80<-as.data.frame(playlists_80$track.id) 
 uri_90<-as.data.frame(playlists_90$track.id) 
+uri_00<-as.data.frame(playlists_00$track.id) 
+uri_10<-as.data.frame(playlists_10$track.id) 
 
+track_50<-get_track_audio_features(uri_50[1:dim(uri_50)[1],])
 track_60<-get_track_audio_features(uri_60[1:dim(uri_60)[1],])
 track_70<-get_track_audio_features(uri_70[1:dim(uri_70)[1],])
 track_80<-get_track_audio_features(uri_80[1:dim(uri_80)[1],])
 track_90<-get_track_audio_features(uri_90[1:dim(uri_90)[1],])
+track_00<-get_track_audio_features(uri_00[1:dim(uri_00)[1],])
+track_10<-get_track_audio_features(uri_10[1:dim(uri_10)[1],])
+
+label_50<-as.data.frame(rep("50an",times=dim(uri_50)[1]))
+names(label_50)[1]<-"genre"
 
 label_60<-as.data.frame(rep("60an",times=dim(uri_60)[1]))
 names(label_60)[1]<-"genre"
@@ -69,13 +82,22 @@ names(label_80)[1]<-"genre"
 label_90<-as.data.frame(rep("90an",times=dim(uri_90)[1]))
 names(label_90)[1]<-"genre"
 
+label_00<-as.data.frame(rep("00an",times=dim(uri_00)[1]))
+names(label_00)[1]<-"genre"
+
+label_10<-as.data.frame(rep("10an",times=dim(uri_10)[1]))
+names(label_10)[1]<-"genre"
+
+t_50<-cbind(playlists_50,track_50,label_50)
 t_60<-cbind(playlists_60,track_60,label_60)
 t_70<-cbind(playlists_70,track_70,label_70)
 t_80<-cbind(playlists_80,track_80,label_80)
 t_90<-cbind(playlists_90,track_90,label_90)
+t_00<-cbind(playlists_00,track_00,label_00)
+t_10<-cbind(playlists_10,track_10,label_10)
 
-playlists<-rbind(t_60,t_70,t_80,t_90)
-summary(track)
+playlists<-rbind(t_50,t_60,t_70,t_80,t_90,t_00,t_10)
+#summary(playlists)
 
 ggplot()+
   geom_histogram(
@@ -126,8 +148,15 @@ plot_valence<-ggplot(data=playlists,aes(x=genre,y=valence,fill=genre))+
   theme(legend.position = "none")+
   stat_summary(fun.y="mean", geom="point", size=2,
                position=position_dodge(width=0.75), color="red")
-plot_valence
-aggregate(playlists, by=list(playlists$genre), FUN=mean)
+#plot_valence
+
+
+
+plot_instrumentalness<-ggplot(data=playlists,aes(x=genre,y=instrumentalness,fill=genre))+
+  geom_boxplot()+
+  theme(legend.position = "none")+
+  stat_summary(fun.y="mean", geom="point", size=2,
+               position=position_dodge(width=0.75), color="red")
 
 plot_tempo<-ggplot(data=playlists,aes(x=genre,y=tempo,fill=genre))+
   geom_boxplot()+
@@ -135,17 +164,21 @@ plot_tempo<-ggplot(data=playlists,aes(x=genre,y=tempo,fill=genre))+
   stat_summary(fun.y="mean", geom="point", size=2,
                position=position_dodge(width=0.75), color="red")
 
-plot_instrumentalness<-ggplot(data=playlists,aes(x=genre,y=instrumentalness,fill=genre))+
+agg<-aggregate(playlists, by=list(playlists$genre), FUN=mean)
+
+plot_tempo <- ggplot(data=playlists,aes(x=genre,y=tempo,fill=genre))+
   geom_boxplot()+
-  theme(legend.position = "none")+
-  stat_summary(fun.y="mean", geom="point", size=2,
-               position=position_dodge(width=0.75), color="red")
+  theme(legend.position = "none")
   
+plot_tempo <- plot_tempo + 
+  stat_summary(fun.y=mean, geom="point",color="red")
+
+print(plot_tempo)
 
 plot_grid(plot_loudness,
           plot_energy,
           plot_tempo,
-          plot_valence,plot_instrumentalness,plot_liveness,
+          plot_valence,plot_danceability,plot_liveness,
           labels = "AUTO")
 
 #ggplot(playlists, aes(x=genre), danceability)) +
