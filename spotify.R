@@ -59,6 +59,13 @@ uri_90<-as.data.frame(playlists_90$track.id)
 uri_00<-as.data.frame(playlists_00$track.id) 
 uri_10<-as.data.frame(playlists_10$track.id) 
 
+gtp<-get_track_popularity(playlists_10$track.uri)
+get_albums(playlists_10$track.id[2])
+
+artists <- get_artists('Radiohead')
+albums <- get_albums(artists$artist_uri[1])
+get_album_tracks(albums)
+
 track_50<-get_track_audio_features(uri_50[1:dim(uri_50)[1],])
 track_60<-get_track_audio_features(uri_60[1:dim(uri_60)[1],])
 track_70<-get_track_audio_features(uri_70[1:dim(uri_70)[1],])
